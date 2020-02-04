@@ -10,8 +10,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.reclyclerviewandrealm.R;
 import com.example.reclyclerviewandrealm.models.Board;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
@@ -22,8 +26,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
     private OnItemClickListener itemClickListener;
 
-    public MyAdapter(Context context, List<Board> list, int layout, OnItemClickListener itemClickListener) {
-        this.context = context;
+    public MyAdapter(List<Board> list, int layout, OnItemClickListener itemClickListener) {
         this.list = list;
         this.layout = layout;
         this.itemClickListener = itemClickListener;
@@ -34,6 +37,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(layout,parent,false);
         ViewHolder viewHolder = new ViewHolder(view);
+        context = parent.getContext();
         return viewHolder;
     }
 
@@ -48,24 +52,27 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView textViewName;
-        public ImageView imageViewPoster;
-
-        TextView title;
-        TextView notes;
-        TextView createAt;
+        public TextView title;
+        public TextView notes;
+        public TextView createAt;
+        private FloatingActionButton fab;
 
         public ViewHolder(View view){
             super(view);
-            //this.textViewName = view.findViewById(R.id.textViewName);
             this.title = view.findViewById(R.id.textViewBoardTitle);
             this.notes = view.findViewById(R.id.textViewBoardNotes);
             this.createAt = view.findViewById(R.id.textViewBoardDate);
         }
 
         public void bind(final Board board, final OnItemClickListener listener){
-            //this.textViewName.setText(name);
+            title.setText(board.getTitle());
+            int numOfNote = board.getNotes().size();
+            String textForNotes = (numOfNote == 1) ? "Note: " + numOfNote : "Notes: " + numOfNote;
+            notes.setText(textForNotes);
 
+            DateFormat df = new SimpleDateFormat("dd/mm/yyyy");
+            String formatDate = df.format(board.getCreateAt());
+            createAt.setText(formatDate);
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
