@@ -30,13 +30,10 @@ public class MainActivity extends AppCompatActivity {
     private MyAdapter adapters;
     private RealmResults<Board> boards;
 
-    //private List<Movie> movies;
     private RecyclerView recyclerView;
     private RecyclerView.Adapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-
     private MyAdapter.OnItemClickListener onItemClickListener;
-
     private FloatingActionButton fab;
 
 
@@ -52,19 +49,28 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewLayoutManager = new LinearLayoutManager(this);
 
 
-        recyclerViewAdapter = new MyAdapter(boards, R.layout.list_view_board_item, onItemClickListener);
+        onItemClickListener = new MyAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Board board, int position) {
+                Toast.makeText(MainActivity.this,  board.getTitle() + " - " + " Posicion: " + position,Toast.LENGTH_SHORT).show();
+            }
+        };
 
+        recyclerViewAdapter = new MyAdapter(boards, R.layout.list_view_board_item, onItemClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         fab = findViewById(R.id.fobAddBoard);
-
-        showAlertForCreatingBoard("Add new Board","Type a name for your board");
-
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showAlertForCreatingBoard("Add new Board","Type a name for your board");
+            }
+        });
     }
+
     private void createNewBoard(String boardName) {
         realm.beginTransaction();
         Board board = new Board(boardName);
@@ -108,6 +114,5 @@ public class MainActivity extends AppCompatActivity {
         //Lo crea y lo muestra
         AlertDialog dialog = builder.create();
         dialog.show();
-
     }
 }
