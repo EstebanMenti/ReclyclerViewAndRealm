@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,49 +15,50 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.reclyclerviewandrealm.adapters.MyAdapter;
+import com.example.reclyclerviewandrealm.adapters.AdapterBoard;
 import com.example.reclyclerviewandrealm.models.Board;
+import com.example.reclyclerviewandrealm.models.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
 
-public class MainActivity extends AppCompatActivity {
+public class BoardActivity extends AppCompatActivity {
 
     private Realm realm;
     private ListView listView;
-    private MyAdapter adapters;
+    private AdapterBoard adapters;
     private RealmResults<Board> boards;
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter recyclerViewAdapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
-    private MyAdapter.OnItemClickListener onItemClickListener;
+    private AdapterBoard.OnItemClickListener onItemClickListener;
     private FloatingActionButton fab;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_board);
 
         realm = Realm.getDefaultInstance();
         boards = realm.where(Board.class).findAll();
 
-        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerViewBoard);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
 
 
-        onItemClickListener = new MyAdapter.OnItemClickListener() {
+        onItemClickListener = new AdapterBoard.OnItemClickListener() {
             @Override
             public void onItemClick(Board board, int position) {
-                Toast.makeText(MainActivity.this,  board.getTitle() + " - " + " Posicion: " + position,Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(BoardActivity.this, NoteActivity.class);
+                intent.putExtra("id",boards.get(position).getId());
+                startActivity(intent);
             }
         };
 
-        recyclerViewAdapter = new MyAdapter(boards, R.layout.list_view_board_item, onItemClickListener);
+        recyclerViewAdapter = new AdapterBoard(boards, R.layout.list_view_board_item, onItemClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);

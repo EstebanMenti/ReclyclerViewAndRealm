@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
+public class AdapterBoard extends RecyclerView.Adapter<AdapterBoard.ViewHolder>{
 
     private Context context;
     private List<Board> list;
@@ -26,7 +25,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder>{
 
     private OnItemClickListener itemClickListener;
 
-    public MyAdapter(List<Board> list, int layout, OnItemClickListener itemClickListener) {
+    public AdapterBoard(List<Board> list, int layout, OnItemClickListener itemClickListener) {
         this.list = list;
         this.layout = layout;
         this.itemClickListener = itemClickListener;
