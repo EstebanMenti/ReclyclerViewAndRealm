@@ -20,7 +20,7 @@ public class Note extends RealmObject {
     }
 
     public Note(String descripcion) {
-        this.id = Myapplication.NoteId.getAndIncrement();
+        this.id = Myapplication.NoteId.incrementAndGet();
         this.createAt = new Date();
         this.descripcion = descripcion;
     }

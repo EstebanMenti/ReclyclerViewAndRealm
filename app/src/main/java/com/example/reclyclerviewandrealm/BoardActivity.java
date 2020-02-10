@@ -1,5 +1,6 @@
 package com.example.reclyclerviewandrealm;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -10,6 +11,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -17,13 +20,15 @@ import android.widget.Toast;
 
 import com.example.reclyclerviewandrealm.adapters.AdapterBoard;
 import com.example.reclyclerviewandrealm.models.Board;
-import com.example.reclyclerviewandrealm.models.Note;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.zip.Inflater;
+
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 
-public class BoardActivity extends AppCompatActivity {
+public class BoardActivity extends AppCompatActivity implements RealmChangeListener<RealmResults<Board>> {
 
     private Realm realm;
     private ListView listView;
@@ -44,6 +49,8 @@ public class BoardActivity extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
         boards = realm.where(Board.class).findAll();
+        //Configura que cambios en la lista Board genere un llamado al metodo "onChange"
+        boards.addChangeListener(this);
 
         recyclerView = findViewById(R.id.recyclerViewBoard);
         recyclerViewLayoutManager = new LinearLayoutManager(this);
@@ -80,6 +87,11 @@ public class BoardActivity extends AppCompatActivity {
         realm.commitTransaction();
     }
 
+    private void deleteBoard( Board board){
+        realm.beginTransaction();
+        board.deleteFromRealm();
+        realm.commitTransaction();
+    }
     /*
     Pop-Up
     */
@@ -116,5 +128,32 @@ public class BoardActivity extends AppCompatActivity {
         //Lo crea y lo muestra
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+
+    /* Evento */
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_board_activity,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.deleteAll:
+                realm.beginTransaction();
+                realm.deleteAll();
+                realm.commitTransaction();
+                return true;
+             default:
+                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onChange(RealmResults<Board> boards) {
+        recyclerViewAdapter.notifyDataSetChanged();
     }
 }

@@ -30,7 +30,6 @@ public class Myapplication extends Application {
         BoardId = getIdByTable(realm, Board.class);
         NoteId = getIdByTable(realm, Note.class);
         realm.close();
-
     }
 
       private void setUpRealmConfig(){
@@ -39,7 +38,6 @@ public class Myapplication extends Application {
                 .Builder(getApplicationContext())
                 .deleteRealmIfMigrationNeeded()
                 .build();
-
          */
         RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
         Realm.setDefaultConfiguration(config);

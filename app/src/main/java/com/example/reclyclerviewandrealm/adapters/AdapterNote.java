@@ -23,11 +23,10 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
     private Context context;
     private List<Note> list;
     private int layout;
-    private AdapterNote.OnItemClickListener itemClickListener;
+    private OnItemClickListener itemClickListener;
 
 
-    public AdapterNote(Context context, List<Note> list, int layout, AdapterNote.OnItemClickListener itemClickListener) {
-        this.context = context;
+    public AdapterNote(List<Note> list, int layout, AdapterNote.OnItemClickListener itemClickListener) {
         this.list = list;
         this.layout = layout;
         this.itemClickListener = itemClickListener;
@@ -37,13 +36,14 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(layout,parent,false);
-        AdapterNote.ViewHolder viewHolder = new AdapterNote.ViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view);
+        context = parent.getContext();
         return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AdapterNote.ViewHolder holder, int position) {
-
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        holder.bind(list.get(position),itemClickListener);
     }
 
     @Override
