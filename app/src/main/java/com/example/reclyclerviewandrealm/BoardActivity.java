@@ -86,10 +86,17 @@ public class BoardActivity extends AppCompatActivity implements RealmChangeListe
         realm.copyToRealm(board);
         realm.commitTransaction();
     }
-
+    /* Borra una Board de la DB*/
     private void deleteBoard( Board board){
         realm.beginTransaction();
         board.deleteFromRealm();
+        realm.commitTransaction();
+    }
+
+    private void editBoard(String name, Board board){
+        realm.beginTransaction();
+        board.setTitle(name);
+        realm.copyToRealm(board);
         realm.commitTransaction();
     }
     /*

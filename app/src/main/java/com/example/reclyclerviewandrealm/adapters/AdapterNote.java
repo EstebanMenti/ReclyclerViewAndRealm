@@ -1,7 +1,9 @@
 package com.example.reclyclerviewandrealm.adapters;
 
 import android.content.Context;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -51,7 +53,8 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
         return list.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+
+    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         public TextView description;
         public TextView createAt;
 
@@ -59,7 +62,15 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
             super(view);
             this.description = view.findViewById(R.id.textViewNoteDescreption);
             this.createAt = view.findViewById(R.id.textViewNoteCreateAt);
+            view.setOnCreateContextMenuListener(this); // Creado para ver si funciona. Sacado de una pagina
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            //getMenuInflater().inflate(R.menu.contex_menu_note_activity, menu);
+            menu.add(Menu.NONE, R.menu.contex_menu_note_activity, Menu.NONE, "String menu");
+        }
+
 
         public void bind(final Note note, final AdapterNote.OnItemClickListener listener){
 
@@ -68,12 +79,17 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
             String formatDate = df.format(note.getCreateAt());
             createAt.setText(formatDate);
 
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onItemClick(note, getAdapterPosition());
                 }
             });
+
+
+
+
         }
     }
     public interface OnItemClickListener{

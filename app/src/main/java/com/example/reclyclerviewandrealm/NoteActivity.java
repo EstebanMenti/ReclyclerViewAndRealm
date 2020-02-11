@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -69,16 +70,19 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
             @Override
             public void onItemClick(Note note, int position) {
                 Toast.makeText(getApplicationContext(),"Se selecciono una nota",Toast.LENGTH_SHORT).show();
+
+                //menu.setHeaderTitle( notes.get(info.position).getDescripcion() );
+                 //getMenuInflater().inflate(R.menu.contex_menu_note_activity, menu);
             }
         };
+
+        //registerForContextMenu( recyclerView );
 
         recyclerViewAdapter = new AdapterNote(notes, R.layout.list_view_note_item, onItemClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
-
-
 
         fab = findViewById(R.id.fobAddNote);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -87,6 +91,10 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
                 showAlertForCreatingNote("Add new Note","Type a name for your Note for "+ board.getTitle());
             }
         });
+
+
+
+        //registerForContextMenu();
     }
 
 
@@ -146,7 +154,29 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
                  return super.onOptionsItemSelected(item);
         }
     }
+    //----------------------------------------------------------------------------------------------
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+      //  AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+       // menu.setHeaderTitle( notes.get(info.position).getDescripcion() );
+        getMenuInflater().inflate(R.menu.contex_menu_note_activity, menu);
+    }
 
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+     switch (item.getItemId()){
+         case R.id.edit_Note:
+             Toast.makeText(getApplicationContext(),"Edit notes",Toast.LENGTH_SHORT).show();
+             return true;
+         case R.id.delete_Note:
+             Toast.makeText(getApplicationContext(),"Clear this note",Toast.LENGTH_SHORT).show();
+             return true;
+     }
+
+     return false;
+     //return super.onContextItemSelected(item);
+    }
+    //----------------------------------------------------------------------------------------------
     private void createNewNote(String note){
         realm.beginTransaction();
         Note _note = new Note(note);
