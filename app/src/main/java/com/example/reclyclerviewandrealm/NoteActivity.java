@@ -16,10 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.reclyclerviewandrealm.adapters.AdapterBoard;
 import com.example.reclyclerviewandrealm.adapters.AdapterNote;
 import com.example.reclyclerviewandrealm.models.Board;
 import com.example.reclyclerviewandrealm.models.Note;
@@ -38,7 +36,7 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
     private Board board;
 
     private RecyclerView recyclerView;
-    private RecyclerView.Adapter recyclerViewAdapter;
+    private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private AdapterNote.OnItemClickListener onItemClickListener;
     private FloatingActionButton fab;
@@ -78,10 +76,10 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
 
         //registerForContextMenu( recyclerView );
 
-        recyclerViewAdapter = new AdapterNote(notes, R.layout.list_view_note_item, onItemClickListener);
+        adapter = new AdapterNote(notes, this, R.layout.list_view_note_item, onItemClickListener);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(recyclerViewLayoutManager);
 
         fab = findViewById(R.id.fobAddNote);
@@ -154,29 +152,7 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
                  return super.onOptionsItemSelected(item);
         }
     }
-    //----------------------------------------------------------------------------------------------
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-      //  AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-       // menu.setHeaderTitle( notes.get(info.position).getDescripcion() );
-        getMenuInflater().inflate(R.menu.contex_menu_note_activity, menu);
-    }
 
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-     switch (item.getItemId()){
-         case R.id.edit_Note:
-             Toast.makeText(getApplicationContext(),"Edit notes",Toast.LENGTH_SHORT).show();
-             return true;
-         case R.id.delete_Note:
-             Toast.makeText(getApplicationContext(),"Clear this note",Toast.LENGTH_SHORT).show();
-             return true;
-     }
-
-     return false;
-     //return super.onContextItemSelected(item);
-    }
-    //----------------------------------------------------------------------------------------------
     private void createNewNote(String note){
         realm.beginTransaction();
         Note _note = new Note(note);
@@ -194,6 +170,6 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
 
     @Override
     public void onChange(Board board) {
-        recyclerViewAdapter.notifyDataSetChanged();
+        adapter.notifyDataSetChanged();
     }
 }
