@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -77,8 +78,9 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
 
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-            // Inflamos el menú
-            menu.setHeaderTitle("Titulo");
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+
+            menu.setHeaderTitle("Titulo: " /* + list.get(info.position).getDescripcion()*/); // ver la forma de poner algun titulo relacionado a la nota
             MenuInflater inflater = activity.getMenuInflater();
             inflater.inflate(R.menu.contex_menu_note_activity, menu);
 
@@ -92,17 +94,24 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
         @Override
         public boolean onMenuItemClick(MenuItem item)
         {
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+            int position = item.getItemId();
+
             switch (item.getItemId()) {
                 case R.id.edit_Note:
                     Toast.makeText(context, "Se selecciono una nota", Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.delete_Note:
-                    Toast.makeText(context, "Se selecciono una dnota", Toast.LENGTH_SHORT).show();
+                    String sinfo = null;
+                    sinfo.valueOf(position);
+                    Toast.makeText(context, "Se selecciono una dnota" + sinfo, Toast.LENGTH_SHORT).show();
                 return true;
                 default:
                     return false;
             }
         }
+
+
 
         public void bind(final Note note, final AdapterNote.OnItemClickListener listener){
 
