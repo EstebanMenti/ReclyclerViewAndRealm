@@ -95,16 +95,20 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
         public boolean onMenuItemClick(MenuItem item)
         {
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            int position = item.getItemId();
+            //int position = item.getItemId();
+            int position = getAdapterPosition();
+            String sinfo = position+"";
+            //sinfo.valueOf(position);
+
 
             switch (item.getItemId()) {
                 case R.id.edit_Note:
-                    Toast.makeText(context, "Se selecciono una nota", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Editar: " +  sinfo, Toast.LENGTH_SHORT).show();
                     return true;
                 case R.id.delete_Note:
-                    String sinfo = null;
-                    sinfo.valueOf(position);
-                    Toast.makeText(context, "Se selecciono una dnota" + sinfo, Toast.LENGTH_SHORT).show();
+                    //onClearNote
+                   // OnOptionMenu.onClearNote(list.get(position),position);
+                    Toast.makeText(context, "Borrar: " + sinfo + " Nota: " + list.get(position).getDescripcion(), Toast.LENGTH_SHORT).show();
                 return true;
                 default:
                     return false;
@@ -134,5 +138,9 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
 
     public interface OnItemClickListener{
         void onItemClick(Note note, int position);
+    }
+
+    public interface OnOptionMenu{
+        static void onClearNote(Note note, int position);
     }
 }
