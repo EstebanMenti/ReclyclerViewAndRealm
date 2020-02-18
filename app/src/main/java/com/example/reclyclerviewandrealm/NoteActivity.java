@@ -39,6 +39,7 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
     private RecyclerView.Adapter adapter;
     private RecyclerView.LayoutManager recyclerViewLayoutManager;
     private AdapterNote.OnItemClickListener onItemClickListener;
+    private AdapterNote.OnOptionMenu onOptionMenu;
     private FloatingActionButton fab;
 
 
@@ -67,16 +68,23 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
         onItemClickListener = new AdapterNote.OnItemClickListener() {
             @Override
             public void onItemClick(Note note, int position) {
-                Toast.makeText(getApplicationContext(),"Se selecciono una nota",Toast.LENGTH_SHORT).show();
 
-                //menu.setHeaderTitle( notes.get(info.position).getDescripcion() );
-                 //getMenuInflater().inflate(R.menu.contex_menu_note_activity, menu);
+                Toast.makeText(getApplicationContext(),"Se selecciono una nota",Toast.LENGTH_SHORT).show();
+            }
+        };
+        onOptionMenu = new AdapterNote.OnOptionMenu() {
+            @Override
+            public void onClearNote(Note note) {
+                deleteNote(note);
+            }
+
+            @Override
+            public void onEditNote(Note note) {
+                showAlertForEditNote( note );
             }
         };
 
-        //registerForContextMenu( recyclerView );
-
-        adapter = new AdapterNote(notes, this, R.layout.list_view_note_item, onItemClickListener);
+        adapter = new AdapterNote(notes, this, R.layout.list_view_note_item, onItemClickListener, onOptionMenu);
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
@@ -97,7 +105,7 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
 
 
     /*
-    Pop-Up
+    Pop-Up new note
     */
     private void showAlertForCreatingNote( String title, String msg){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -126,6 +134,46 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(getApplicationContext(),"No se guarda nada",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //Lo crea y lo muestra
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+    /*
+    Pop-Up edit note
+    */
+    private void showAlertForEditNote(final Note note ){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Edit description");
+
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_edit_note,null);
+        builder.setView(viewInflated);
+
+        final EditText input = viewInflated.findViewById(R.id.editTextNote);
+
+        input.setText(note.getDescripcion());
+
+        builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String noteName =input.getText().toString().trim();
+
+                if(noteName.length() > 0){
+                    editNote(note, noteName.toString());
+                }else{
+                    Toast.makeText(getApplicationContext(),"Es requerido un nombre",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(),"Cancel",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -169,6 +217,18 @@ public class NoteActivity extends AppCompatActivity implements RealmChangeListen
         realm.commitTransaction();
     }
 
+    private void deleteNote(Note note){
+        realm.beginTransaction();
+        note.deleteFromRealm();
+        realm.commitTransaction();
+    }
+
+    private void editNote( Note note, String description){
+        realm.beginTransaction();
+        note.setDescripcion(description);
+        realm.copyToRealmOrUpdate(note);
+        realm.commitTransaction();
+    }
     @Override
     public void onChange(Board board) {
         adapter.notifyDataSetChanged();

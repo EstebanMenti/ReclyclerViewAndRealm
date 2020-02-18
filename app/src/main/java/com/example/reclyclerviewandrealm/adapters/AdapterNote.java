@@ -32,13 +32,15 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
     Activity activity;
     private int layout;
     private OnItemClickListener itemClickListener;
+    private OnOptionMenu optionMenu;
 
 
-    public AdapterNote(List<Note> list, Activity activity, int layout, AdapterNote.OnItemClickListener itemClickListener) {
+    public AdapterNote(List<Note> list, Activity activity, int layout, AdapterNote.OnItemClickListener itemClickListener, OnOptionMenu optionMenu) {
         this.list = list;
         this.layout = layout;
         this.activity = activity;
         this.itemClickListener = itemClickListener;
+        this.optionMenu = optionMenu;
     }
 
     @NonNull
@@ -94,21 +96,14 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
         @Override
         public boolean onMenuItemClick(MenuItem item)
         {
-            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-            //int position = item.getItemId();
             int position = getAdapterPosition();
-            String sinfo = position+"";
-            //sinfo.valueOf(position);
-
 
             switch (item.getItemId()) {
                 case R.id.edit_Note:
-                    Toast.makeText(context, "Editar: " +  sinfo, Toast.LENGTH_SHORT).show();
+                    optionMenu.onEditNote(list.get(position));
                     return true;
                 case R.id.delete_Note:
-                    //onClearNote
-                   // OnOptionMenu.onClearNote(list.get(position),position);
-                    Toast.makeText(context, "Borrar: " + sinfo + " Nota: " + list.get(position).getDescripcion(), Toast.LENGTH_SHORT).show();
+                    optionMenu.onClearNote(list.get(position));
                 return true;
                 default:
                     return false;
@@ -141,6 +136,7 @@ public class AdapterNote extends RecyclerView.Adapter<AdapterNote.ViewHolder>{
     }
 
     public interface OnOptionMenu{
-        static void onClearNote(Note note, int position);
+        void onClearNote(Note note);
+        void onEditNote(Note note);
     }
 }
